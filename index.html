@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Auto Claim Bonus</title>
+
+<style>
+body {
+    background: #0f172a;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.box {
+    width: 340px;
+    background: #020617;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #38bdf8;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
+
+.status {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.timer {
+    font-size: 26px;
+    margin: 15px 0;
+    color: #22c55e;
+}
+
+.progress {
+    width: 100%;
+    height: 12px;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,#22c55e,#38bdf8);
+    transition: width 1s linear;
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #38bdf8;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #475569;
+    cursor: not-allowed;
+}
+
+.log {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+    <h1>Auto Claim Bonus</h1>
+    <div class="status" id="status">Menunggu...</div>
+    <div class="timer" id="timer">00:00</div>
+
+    <div class="progress">
+        <div class="bar" id="bar"></div>
+    </div>
+
+    <button id="claimBtn" disabled>CLAIM SEKARANG</button>
+    <div class="log" id="log">Auto-claim aktif</div>
+</div>
+
+<script>
+const CLAIM_DELAY = 30; // detik
+let timeLeft = CLAIM_DELAY;
+
+const timerEl = document.getElementById("timer");
+const barEl = document.getElementById("bar");
+const statusEl = document.getElementById("status");
+const btn = document.getElementById("claimBtn");
+const log = document.getElementById("log");
+
+function formatTime(sec) {
+    let m = Math.floor(sec / 60);
+    let s = sec % 60;
+    return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function claimBonus() {
+    statusEl.innerHTML = "✅ Bonus berhasil diklaim!";
+    log.innerHTML = "Terakhir klaim: " + new Date().toLocaleTimeString();
+    localStorage.setItem("lastClaim", Date.now());
+    timeLeft = CLAIM_DELAY;
+    btn.disabled = true;
+}
+
+btn.onclick = claimBonus;
+
+setInterval(() => {
+    timeLeft--;
+    if (timeLeft <= 0) {
+        timerEl.innerHTML = "READY";
+        statusEl.innerHTML = "🎉 Bonus siap diklaim";
+        barEl.style.width = "100%";
+        btn.disabled = false;
+    } else {
+        timerEl.innerHTML = formatTime(timeLeft);
+        barEl.style.width = ((CLAIM_DELAY - timeLeft) / CLAIM_DELAY * 100) + "%";
+        statusEl.innerHTML = "⏳ Menunggu waktu klaim...";
+    }
+}, 1000);
+</script>
+
+</body>
+</html>
